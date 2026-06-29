@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  postgres-staging:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: mi_usuario_staging
+      POSTGRES_PASSWORD: mi_password_seguro
+      POSTGRES_DB: carritocompras_staging
+    ports:
+      - "5433:5432"
+    volumes:
+      - staging_db_data:/var/lib/postgresql/data
+
+volumes:
+  staging_db_data:

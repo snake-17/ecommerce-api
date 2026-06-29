@@ -1,0 +1,13 @@
+/* 1. Los imports de fuentes y Tailwind SIEMPRE van arriba del todo */
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&display=swap");
+@import "tailwindcss";
+
+/* 2. En la v4, configuramos las fuentes y estilos globales aquí */
+@theme {
+  --font-quicksand: "Quicksand", sans-serif;
+}
+
+/* 3. Estilos globales directos para el body (ya no hace falta @layer base) */
+body {
+  @apply font-quicksand m-0;
+}

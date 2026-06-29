@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+enum Role {
+  USER
+  ADMIN
+}
+
+model Client {
+  id        Int      @id @default(autoincrement()) @map("client_id")
+  name      String   @db.VarChar
+  email     String   @unique @db.VarChar
+  password  String   @db.VarChar 
+  role      Role     @default(USER)
+  createdAt DateTime @default(now()) @map("created_at") 
+  
+  orders    Order[]  // Sugerencia: plural para mayor claridad
+
+  @@map("clients")
+}
+enum Category {
+  clothes
+  electronics
+  furnitures
+  toys
+  others
+}
+model Product {
+  id        Int         @id @default(autoincrement()) @map("product_id")
+  name      String
+  desc      String      @db.VarChar(150)
+  category  Category    @default(others)
+  price     Decimal     @db.Decimal(10, 2)
+  img       String
+  active    Boolean     @default(true)
+
+  inventory Inventory?
+  orderItems OrderItem[] // Sugerencia: plural
+
+  @@map("products")
+}
+
+model Inventory {
+  productId        Int     @id @map("product_id") // Sugerencia: productId (camelCase)
+  totalQuantity    Int     @map("total_quantity")
+  reservedQuantity Int     @map("reserved_quantity")
+  
+  product          Product @relation(fields: [productId], references: [id])
+
+  @@map("inventory")
+}
+enum Status {
+  CREATED
+  RESERVED
+  PAID
+  CANCELLED
+  EXPIRED
+}
+model Order {
+  id          Int         @id @default(autoincrement()) @map("order_id")
+  clientId    Int         @map("client_id")
+  status      Status      @default(CREATED)
+  totalAmount Decimal     @db.Decimal(10, 2) @map("total_amount")
+  expiresAt   DateTime?    @map("expires_at")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  client      Client      @relation(fields: [clientId], references: [id])
+  orderItems  OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id              Int     @id @default(autoincrement()) @map("order_item_id")
+  orderId         Int     @map("order_id")
+  productId       Int     @map("product_id")
+  quantity        Int
+  priceAtPurchase Decimal @db.Decimal(10, 2) @map("price_at_purchase")
+
+  order           Order   @relation(fields: [orderId], references: [id])
+  product         Product @relation(fields: [productId], references: [id])
+
+  @@unique([orderId, productId]) 
+  @@map("order_items") 
+}
