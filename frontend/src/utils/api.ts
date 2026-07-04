@@ -1,5 +1,5 @@
-const API_BASE_URL = "http://localhost:3006/api";
-
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:3006/api";
 export interface LoginResponse {
   token: string;
   name?: string;
@@ -26,16 +26,18 @@ export interface ApiProduct {
  */
 async function apiRequest<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
-  
+  // Asegura que no se dupliquen slashes accidentales al concatenar
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const url = `${API_BASE_URL}${cleanEndpoint}`;
+
   // Set JSON headers by default
   const headers = new Headers(options.headers);
   if (!headers.has("Content-Type") && !(options.body instanceof FormData)) {
     headers.set("Content-Type", "application/json");
   }
-  
+
   const config = {
     ...options,
     headers,
@@ -53,7 +55,10 @@ async function apiRequest<T>(
 
   if (!response.ok) {
     // Return backend error message if available, otherwise generic message
-    const errorMsg = data.message || data.error || `Request failed with status ${response.status}`;
+    const errorMsg =
+      data.message ||
+      data.error ||
+      `Request failed with status ${response.status}`;
     throw new Error(errorMsg);
   }
 
@@ -68,14 +73,23 @@ export const authApi = {
     });
   },
 
-  async register(name: string, email: string, password: string): Promise<RegisterResponse> {
+  async register(
+    name: string,
+    email: string,
+    password: string,
+  ): Promise<RegisterResponse> {
     return apiRequest<RegisterResponse>("/auth/register", {
       method: "POST",
       body: JSON.stringify({ name, email, password }),
     });
   },
 
-  async editProfile(token: string, name: string, email: string, password: string): Promise<void> {
+  async editProfile(
+    token: string,
+    name: string,
+    email: string,
+    password: string,
+  ): Promise<void> {
     return apiRequest<void>("/auth/edit", {
       method: "PATCH",
       headers: {
@@ -117,7 +131,7 @@ export const ordersApi = {
   async addItems(
     token: string,
     orderId: number,
-    items: { productId: number; quantity: number }[]
+    items: { productId: number; quantity: number }[],
   ): Promise<AddItemsResponse> {
     return apiRequest<AddItemsResponse>(`/orders/${orderId}/items`, {
       method: "POST",
@@ -140,4 +154,3 @@ export const ordersApi = {
     });
   },
 };
-
