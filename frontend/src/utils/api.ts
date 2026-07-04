@@ -1,5 +1,5 @@
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:3006/api";
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:3005/api";
 export interface LoginResponse {
   token: string;
   name?: string;
@@ -37,7 +37,7 @@ async function apiRequest<T>(
   if (!headers.has("Content-Type") && !(options.body instanceof FormData)) {
     headers.set("Content-Type", "application/json");
   }
-
+  headers.set("ngrok-skip-browser-warning", "true");
   const config = {
     ...options,
     headers,
