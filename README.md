@@ -11,12 +11,12 @@ The frontend was built with React, Vite and TypeScript, while the backend was de
 ## 🚀 Live Demo
 
 ### Frontend
-> [(https://ecommerce-pq7mn0yvi-snake-17s-projects.vercel.app)]
+> [https://ecommerce-pq7mn0yvi-snake-17s-projects.vercel.app]
 ### API
 > Add your Azure API URL here
 
 ### API Documentation
-> [https://ecommerce-pq7mn0yvi-snake-17s-projects.vercel.app]
+> [https://ecommerce-pq7mn0yvi-snake-17s-projects.vercel.app/api-docs]
 
 ---
 
